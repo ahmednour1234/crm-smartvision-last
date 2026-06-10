@@ -27,9 +27,28 @@ class MeetingResource extends Resource
         return Auth::user()?->hasPermission('view_any_meetings') ?? false;
     }
 
+    protected static function isAdmin(): bool
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return false;
+        }
+
+        return \Illuminate\Support\Facades\DB::table('user_role')
+            ->join('roles', 'roles.id', '=', 'user_role.role_id')
+            ->where('user_role.user_id', $user->id)
+            ->where(function ($query) {
+                $query->where('roles.slug', 'admin')
+                    ->orWhere('roles.name', 'Admin')
+                    ->orWhere('roles.id', 1);
+            })
+            ->exists();
+    }
+
     public static function canCreate(): bool
     {
-        return Auth::user()?->hasRole('admin') ?? false;
+        return static::isAdmin();
     }
 
     public static function canEdit($record): bool
