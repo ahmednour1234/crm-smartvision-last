@@ -84,7 +84,7 @@ class CompanyResource extends Resource
 
     public static function canView($record): bool
     {
-        return Auth::check();
+        return static::isAdmin() || static::isMine($record);
     }
 
     public static function canEdit($record): bool
@@ -408,7 +408,8 @@ class CompanyResource extends Resource
                     : null,
             ]))
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->visible(fn ($record) => static::isAdmin() || static::isMine($record)),
                 Tables\Actions\EditAction::make()
                     ->visible(fn ($record) => static::canEdit($record)),
                 Tables\Actions\DeleteAction::make()
