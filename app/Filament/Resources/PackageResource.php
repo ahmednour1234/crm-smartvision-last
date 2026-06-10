@@ -19,6 +19,26 @@ class PackageResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cube';
 
+    public static function canViewAny(): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()?->hasPermission('view_any_packages') ?? false;
+    }
+
+    public static function canCreate(): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()?->hasPermission('create_packages') ?? false;
+    }
+
+    public static function canEdit($record): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()?->hasPermission('update_packages') ?? false;
+    }
+
+    public static function canDelete($record): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()?->hasPermission('delete_packages') ?? false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form

@@ -49,6 +49,19 @@ class CompanyResource extends Resource
         return Auth::id() && (int) $record->user_id === (int) Auth::id();
     }
 
+    /**
+     * Hide a company's private value from users who are neither the owner
+     * nor an admin. Used to keep contact details private between users.
+     */
+    protected static function maskedValue($record, ?string $value): ?string
+    {
+        if (static::isAdmin() || static::isMine($record)) {
+            return $value;
+        }
+
+        return '—';
+    }
+
     protected static function visibleStatus($record): string
     {
         if (static::isAdmin() || static::isMine($record)) {
@@ -304,14 +317,17 @@ class CompanyResource extends Resource
 
                 Tables\Columns\TextColumn::make('contact_person')
                     ->label('Contact person')
+                    ->formatStateUsing(fn ($state, $record) => static::maskedValue($record, $state))
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('contact_email')
                     ->label('Contact email')
+                    ->formatStateUsing(fn ($state, $record) => static::maskedValue($record, $state))
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('contact_mobile')
                     ->label('Contact mobile')
+                    ->formatStateUsing(fn ($state, $record) => static::maskedValue($record, $state))
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('package.name')

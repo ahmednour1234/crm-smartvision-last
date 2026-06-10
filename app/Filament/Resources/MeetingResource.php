@@ -29,7 +29,7 @@ class MeetingResource extends Resource
 
     public static function canCreate(): bool
     {
-        return Auth::user()?->hasPermission('create_meetings') ?? false;
+        return Auth::user()?->hasRole('admin') ?? false;
     }
 
     public static function canEdit($record): bool

@@ -25,6 +25,26 @@ class EventResource extends Resource
     protected static ?string $modelLabel = 'Event';
     protected static ?string $pluralModelLabel = 'Events';
 
+    public static function canViewAny(): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()?->hasPermission('view_any_events') ?? false;
+    }
+
+    public static function canCreate(): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()?->hasPermission('create_events') ?? false;
+    }
+
+    public static function canEdit($record): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()?->hasPermission('update_events') ?? false;
+    }
+
+    public static function canDelete($record): bool
+    {
+        return \Illuminate\Support\Facades\Auth::user()?->hasPermission('delete_events') ?? false;
+    }
+
     public static function form(Form $form): Form
     {
         return $form->schema([
