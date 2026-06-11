@@ -209,6 +209,17 @@ class MeetingResource extends Resource
             ]);
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (!static::isAdmin()) {
+            $query->where('user_id', Auth::id());
+        }
+
+        return $query;
+    }
+
     public static function getRelations(): array
     {
         return [
